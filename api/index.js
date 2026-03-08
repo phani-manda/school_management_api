@@ -11,6 +11,20 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Initialize DB table on cold start
+let dbInitialized = false;
+app.use(async (req, res, next) => {
+    try {
+        if (!dbInitialized) {
+            await initializeDatabase();
+            dbInitialized = true;
+        }
+        next();
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Database initialization failed.' });
+    }
+});
+
 // Routes
 app.use('/', schoolRoutes);
 
@@ -19,19 +33,4 @@ app.get('/', (req, res) => {
     res.json({ status: 'OK', message: 'School Management API is running.' });
 });
 
-// Initialize DB table on cold start
-let dbInitialized = false;
-const ensureDb = async () => {
-    if (!dbInitialized) {
-        await initializeDatabase();
-        dbInitialized = true;
-    }
-};
-
-// Wrap with DB init for serverless
-const handler = async (req, res) => {
-    await ensureDb();
-    return app(req, res);
-};
-
-module.exports = handler;
+module.exports = app;
