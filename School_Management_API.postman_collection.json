@@ -1,0 +1,159 @@
+{
+    "info": {
+        "name": "School Management API",
+        "description": "Postman collection for School Management APIs – Add School & List Schools sorted by proximity.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3000",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Add School",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Springfield Elementary School\",\n    \"address\": \"123 Main St, Springfield, IL\",\n    \"latitude\": 39.7817,\n    \"longitude\": -89.6501\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/addSchool",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["addSchool"]
+                },
+                "description": "Add a new school to the database.\n\n**Payload:**\n- `name` (string, required) – School name\n- `address` (string, required) – School address\n- `latitude` (number, required) – Latitude (-90 to 90)\n- `longitude` (number, required) – Longitude (-180 to 180)\n\n**Expected Response (201):**\n```json\n{\n    \"success\": true,\n    \"message\": \"School added successfully.\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"Springfield Elementary School\",\n        \"address\": \"123 Main St, Springfield, IL\",\n        \"latitude\": 39.7817,\n        \"longitude\": -89.6501\n    }\n}\n```"
+            },
+            "response": [
+                {
+                    "name": "Success – School Added",
+                    "status": "Created",
+                    "code": 201,
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "body": "{\n    \"success\": true,\n    \"message\": \"School added successfully.\",\n    \"data\": {\n        \"id\": 1,\n        \"name\": \"Springfield Elementary School\",\n        \"address\": \"123 Main St, Springfield, IL\",\n        \"latitude\": 39.7817,\n        \"longitude\": -89.6501\n    }\n}"
+                },
+                {
+                    "name": "Validation Error",
+                    "status": "Bad Request",
+                    "code": 400,
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "body": "{\n    \"success\": false,\n    \"errors\": [\n        \"name is required and must be a non-empty string.\",\n        \"latitude must be a valid number between -90 and 90.\"\n    ]\n}"
+                }
+            ]
+        },
+        {
+            "name": "Add School – Shelbyville High",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Shelbyville High School\",\n    \"address\": \"456 Oak Ave, Shelbyville, IL\",\n    \"latitude\": 39.4064,\n    \"longitude\": -88.7902\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/addSchool",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["addSchool"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Add School – Capital City Academy",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"name\": \"Capital City Academy\",\n    \"address\": \"789 State St, Capital City, IL\",\n    \"latitude\": 40.6331,\n    \"longitude\": -89.3985\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/addSchool",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["addSchool"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "List Schools (sorted by proximity)",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/listSchools?latitude=39.7817&longitude=-89.6501",
+                    "host": ["{{baseUrl}}"],
+                    "path": ["listSchools"],
+                    "query": [
+                        {
+                            "key": "latitude",
+                            "value": "39.7817",
+                            "description": "User's latitude"
+                        },
+                        {
+                            "key": "longitude",
+                            "value": "-89.6501",
+                            "description": "User's longitude"
+                        }
+                    ]
+                },
+                "description": "List all schools sorted by proximity to the provided coordinates.\n\n**Query Parameters:**\n- `latitude` (number, required) – User's latitude\n- `longitude` (number, required) – User's longitude\n\n**Expected Response (200):**\n```json\n{\n    \"success\": true,\n    \"count\": 3,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Springfield Elementary School\",\n            \"address\": \"123 Main St, Springfield, IL\",\n            \"latitude\": 39.7817,\n            \"longitude\": -89.6501,\n            \"distance_km\": 0\n        },\n        {\n            \"id\": 3,\n            \"name\": \"Capital City Academy\",\n            \"address\": \"789 State St, Capital City, IL\",\n            \"latitude\": 40.6331,\n            \"longitude\": -89.3985,\n            \"distance_km\": 96.12\n        }\n    ]\n}\n```"
+            },
+            "response": [
+                {
+                    "name": "Success – Schools Listed",
+                    "status": "OK",
+                    "code": 200,
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "body": "{\n    \"success\": true,\n    \"count\": 3,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Springfield Elementary School\",\n            \"address\": \"123 Main St, Springfield, IL\",\n            \"latitude\": 39.7817,\n            \"longitude\": -89.6501,\n            \"distance_km\": 0\n        },\n        {\n            \"id\": 3,\n            \"name\": \"Capital City Academy\",\n            \"address\": \"789 State St, Capital City, IL\",\n            \"latitude\": 40.6331,\n            \"longitude\": -89.3985,\n            \"distance_km\": 96.12\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Shelbyville High School\",\n            \"address\": \"456 Oak Ave, Shelbyville, IL\",\n            \"latitude\": 39.4064,\n            \"longitude\": -88.7902,\n            \"distance_km\": 82.34\n        }\n    ]\n}"
+                },
+                {
+                    "name": "Validation Error – Missing params",
+                    "status": "Bad Request",
+                    "code": 400,
+                    "header": [
+                        {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                        }
+                    ],
+                    "body": "{\n    \"success\": false,\n    \"errors\": [\n        \"latitude query parameter is required.\",\n        \"longitude query parameter is required.\"\n    ]\n}"
+                }
+            ]
+        }
+    ]
+}
